@@ -25,7 +25,7 @@ runs:
         curl -s -Lo $HOME/lueur https://github.com/Lawouach/demo/releases/download/1/lueur
         chmod +x $HOME/lueur
 
-        ./lueur --version
+        $HOME/lueur --version
 
     - name: Run scenarios
       shell: bash
