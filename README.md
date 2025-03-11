@@ -38,7 +38,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-reliability-scenario
+  run-reliability-scenario:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4

@@ -14,7 +14,9 @@ runs:
     - name: Install lueur
       shell: bash
       run: |
-        curl -s -Lo lueur https://github.com/rebound-how/rebound/releases/download/v0.1.40/lueur-linux-amd64 
+        curl -s -Lo lueur https://github.com/Lawouach/demo/releases/download/1/lueur
         chmod +x lueur
 
-        ./lueur --version
+        export PATH=`pwd`:$PATH
+
+        lueur --version
