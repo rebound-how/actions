@@ -5,6 +5,9 @@ branding:
   icon: "check-circle"
   color: "red"
 inputs:
+  github-token:
+    description: "The GitHub token to create issues if requested"
+    required: true
   scenario:
     description: "Path to a lueur scenario file or a directory containing scenario files"
     required: true
@@ -48,4 +51,4 @@ runs:
           -F ${{ inputs.report }} \
           --label lueur
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
