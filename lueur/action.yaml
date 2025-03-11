@@ -22,7 +22,8 @@ runs:
     - name: Install lueur
       shell: bash
       run: |
-        curl -s -Lo $HOME/.local/bin/lueur https://github.com/Lawouach/demo/releases/download/1/lueur
+        curl -s -Lo lueur https://github.com/Lawouach/demo/releases/download/1/lueur
+        cp lueur $HOME/.local/bin/
         chmod +x $HOME/.local/bin/lueur
 
         echo "$HOME/.local/bin" >> "$GITHUB_PATH"
