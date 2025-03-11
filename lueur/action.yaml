@@ -25,14 +25,12 @@ runs:
         curl -s -Lo lueur https://github.com/Lawouach/demo/releases/download/1/lueur
         chmod +x lueur
 
-        export PATH=`pwd`:$PATH
-
-        lueur --version
+        ./lueur --version
 
     - name: Run scenarios
       shell: bash
       run: |
-        lueur scenario run \
+        ./lueur scenario run \
           --scenario ${{ inputs.scenario }} \
           --report ${{ inputs.report }} \
           --result ${{ inputs.result }}
