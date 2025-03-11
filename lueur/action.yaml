@@ -48,7 +48,6 @@ runs:
       run: |
         gh issue create \
           --title "Rebound / lueur - Scenario failed to meet expectations" \
-          -F ${{ inputs.report }} \
-          --label lueur
+          -F ${{ inputs.report }}
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
