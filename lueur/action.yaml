@@ -46,8 +46,8 @@ runs:
       if: "${{ inputs.create-issue-on-failure == 'true'}}"
       shell: bash
       run: |
-        status=`cat ${{ inputs.result }} | jq 'all(.items[].expect.got.decision; contains("failure"))' -r`
-        if [[ "$status" == "false" ]]
+        status=`cat ${{ inputs.result }} | jq 'any(.items[].expect.got.decision; contains("failure"))' -r`
+        if [[ "$status" == "true" ]]
         then
             gh issue create \
               --title "Rebound / lueur - Scenario failed to meet expectations" \
