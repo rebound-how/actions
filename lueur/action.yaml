@@ -46,6 +46,7 @@ runs:
       if: "${{ inputs.create-issue-on-failure == 'true'}}"
       shell: bash
       run: |
+        which jq
         status=`cat ${{ inputs.result }} | jq 'all(.items[].expect.got.decision; contains("failure"))' -e -r`
         echo $status
         if [[ "$status" == "false" ]]
