@@ -42,7 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - uses: reliablyhq/actions/lueur@main
+    - uses: rebound-how/actions@main
 ```
 
 Store this as a workflow called `lueur.yaml`.
