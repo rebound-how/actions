@@ -46,7 +46,12 @@ runs:
       if: "${{ inputs.create-issue-on-failure == 'true'}}"
       shell: bash
       run: |
-        status=`cat ${{ inputs.result }} | jq 'all(.items[].expect.got.decision; contains("failure"))' -e -r`
-        echo $status
+        status=`cat ${{ inputs.result }} | jq 'all(.items[].expect.got.decision; contains("failure"))' -r`
+        if [[ "$status" == "false" ]]
+        then
+            gh issue create \
+              --title "Rebound / lueur - Scenario failed to meet expectations" \
+              -F ${{ inputs.report }}
+        fi
       env:
         GITHUB_TOKEN: ${{ inputs.github-token }}
