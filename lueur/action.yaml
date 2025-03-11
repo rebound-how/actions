@@ -16,6 +16,10 @@ inputs:
     description: "Path where to store the scenario results"
     required: false
     default:  "./results.json"
+  create-issue-on-failure:
+    description: "Create a new issue on test failure"
+    required: false
+    default:  "false"
 runs:
   using: "composite"
   steps:
@@ -34,3 +38,14 @@ runs:
           --scenario ${{ inputs.scenario }} \
           --report ${{ inputs.report }} \
           --result ${{ inputs.result }}
+
+    - name: Create issue if failed
+      if: "${{ inputs.create-issue-on-failure == 'true'}}"
+      shell: bash
+      run: |
+        gh issue create \
+          --title "Rebound / lueur - Scenario failed to meet expectations" \
+          -F ${{ inputs.report }} \
+          --label lueur
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
