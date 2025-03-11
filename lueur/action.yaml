@@ -22,15 +22,15 @@ runs:
     - name: Install lueur
       shell: bash
       run: |
-        curl -s -Lo lueur https://github.com/Lawouach/demo/releases/download/1/lueur
+        curl -s -Lo $HOME/lueur https://github.com/Lawouach/demo/releases/download/1/lueur
         chmod +x lueur
 
-        ./lueur --version
+        ./$HOME/lueur --version
 
     - name: Run scenarios
       shell: bash
       run: |
-        ./lueur scenario run \
+        ./$HOME/lueur scenario run \
           --scenario ${{ inputs.scenario }} \
           --report ${{ inputs.report }} \
           --result ${{ inputs.result }}
