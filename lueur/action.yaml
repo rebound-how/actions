@@ -47,6 +47,7 @@ runs:
       shell: bash
       run: |
         status=$(cat ${{ inputs.result }} | jq 'all(.items[].expect.got.decision; contains("failure"))' -e -r)
+        echo $status
         if status == "false"; then
             gh issue create \
               --title "Rebound / lueur - Scenario failed to meet expectations" \
