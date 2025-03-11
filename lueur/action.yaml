@@ -12,7 +12,7 @@ inputs:
     description: "Path where to store the generated report"
     required: false
     default: "./report.md"
-  results:
+  result:
     description: "Path where to store the scenario results"
     required: false
     default:  "./results.json"
