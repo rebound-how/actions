@@ -52,6 +52,8 @@ Store this as a workflow called `lueur.yaml`.
 The Rebound lueur Action has properties which are passed to the underlying
 script. These are passed to the action using `with`.
 
-| Property | Default | Description |
-| --- | --- | --- |
-| github-token | | GitHub token with enough permissions to commit to the repository. Usually set it with `${{ secrets.GITHUB_TOKEN }}` |
+| Property | Required | Default | Description |
+| --- | --- | --- | --- |
+| scenario | Yes | | Path to a single [lueur scenario file][lueurscenario] or a directory containing scenario files |
+| report | No | report.md | Path to the file where to store the generated report. The extension determines the type of report generated. |
+| result | No | result.json | Path to the file containing the events and traces from the scenario runs. |

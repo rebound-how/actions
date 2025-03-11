@@ -5,9 +5,17 @@ branding:
   icon: "check-circle"
   color: "red"
 inputs:
-  github-token:
-    description: "The GitHub token to commit the results"
+  scenario:
+    description: "Path to a lueur scenario file or a directory containing scenario files"
     required: true
+  report:
+    description: "Path where to store the generated report"
+    required: false
+    default: "./report.md"
+  results:
+    description: "Path where to store the scenario results"
+    required: false
+    default:  "./results.json"
 runs:
   using: "composite"
   steps:
@@ -20,3 +28,11 @@ runs:
         export PATH=`pwd`:$PATH
 
         lueur --version
+
+    - name: Run scenarios
+      shell: bash
+      run: |
+        lueur scenario run \
+          --scenario ${{ inputs.scenario }} \
+          --report ${{ inputs.report }} \
+          --result ${{ inputs.result }}
