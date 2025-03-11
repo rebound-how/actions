@@ -1,0 +1,14 @@
+name: 'Rebound Actions'
+description: 'Use Rebound in your GitHub workflow'
+author: 'Rebound'
+branding:
+  icon: "check-circle"
+  color: "red"
+runs:
+  using: "composite"
+  steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: rebound-how/actions/lueur@main

@@ -1,0 +1,20 @@
+name: 'Rebound lueur'
+description: 'Run a lueur scenario'
+author: 'Rebound'
+branding:
+  icon: "check-circle"
+  color: "red"
+inputs:
+  github-token:
+    description: "The GitHub token to commit the results"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Install lueur
+      shell: bash
+      run: |
+        curl -s -Lo lueur https://github.com/rebound-how/rebound/releases/download/v0.1.40/lueur-linux-amd64 
+        chmod +x lueur
+
+        ./lueur --version
