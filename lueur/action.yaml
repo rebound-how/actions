@@ -23,7 +23,7 @@ runs:
       shell: bash
       run: |
         curl -s -Lo $HOME/.local/bin/lueur https://github.com/Lawouach/demo/releases/download/1/lueur
-        chmod +x $$HOME/.local/bin/lueur
+        chmod +x $HOME/.local/bin/lueur
 
         echo "$HOME/.local/bin" >> "$GITHUB_PATH"
 
