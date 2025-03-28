@@ -1,0 +1,130 @@
+name: 'Rebound - Reliably Plan Workflow'
+description: 'Run a Reliably Plan'
+author: 'Rebound'
+branding:
+  icon: "check-circle"
+  color: "red"
+inputs:
+  reliably-host:
+    description: "The hostname of the Reliably server"
+    required: true
+  github-token:
+    description: "The GitHub token to commit the results"
+    required: true
+  reliably-service-token:
+    description: "Reliably service (user) authentication token"
+    required: true
+  working-dir:
+    description: "The directory where the plan will be run from"
+    required: true
+    default: "./plans"
+  plan-id:
+    description: "The identifier of the executed plan"
+    required: true
+  org-id:
+    description: "The identifier of the organization owning the plan"
+    required: true
+  reliably-experiment-extra:
+    description: "A json encoded object to be added to the result of the run"
+    required: false
+  python-version:
+    description: "The python version to use"
+    required: false
+    default: "3.12"
+  dependencies:
+    description: "Various dependencies to install. Comma-separated list from: oha, aws-authenticator, lueur"
+    required: false
+runs:
+  using: "composite"
+  steps:
+    - name: Notify running status
+      shell: bash
+      run: |
+        curl -s --http2 -X PUT \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer ${{ inputs.reliably-service-token }}" \
+          -d '{"status":"running"}' \
+          https://${{ inputs.reliably-host }}/api/v1/organization/${{ inputs.org-id }}/plans/${{ inputs.plan-id }}/status
+        echo "PLAN_STATUS=running" >> $GITHUB_ENV
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+
+    - name: Create directory to hold results and logs
+      shell: bash
+      run: mkdir -p ${{ inputs.working-dir }}
+
+    - name: Add repository top-level ~/bin directory to the PATH
+      shell: bash
+      run: |
+        mkdir -p $HOME/bin
+        echo "Adding $HOME/bin to PATH"
+        echo "PATH=$PATH:$HOME/bin" >> $GITHUB_ENV
+
+    - name: Install Dependencies
+      shell: bash
+      run: |
+        curl -o uv.lock --silent https://raw.githubusercontent.com/rebound-how/actions/main/reliably/uv.lock
+        curl -o pyproject.toml --silent https://raw.githubusercontent.com/rebound-how/actions/main/reliably/pyproject.toml
+        uv sync --frozen
+
+        if [[ "${input.dependencies}" == *"aws-authenticator"* ]]; then
+          # to authenticate to AWS EKS clusters
+          curl -s -Lo $HOME/bin/aws-iam-authenticator https://github.com/kubernetes-sigs/aws-iam-authenticator/releases/download/v0.6.30/aws-iam-authenticator_0.6.30_linux_amd64
+          chmod +x $HOME/bin/aws-iam-authenticator
+        fi
+
+        if [[ "${input.dependencies}" == *"oha"* ]]; then
+          # to run load tests
+          curl -s -Lo $HOME/bin/oha https://github.com/hatoo/oha/releases/download/v1.8.0/oha-linux-amd64
+          chmod +x $HOME/bin/oha
+        fi
+  
+        if [[ "${input.dependencies}" == *"lueur"* ]]; then
+          # ro run network faults
+          curl -s -Lo $HOME/bin/lueur https://github.com/rebound-how/rebound/releases/download/0.2.1/lueur-cli-0.2.1-x86_64-unknown-linux-musl 
+          chmod +x $HOME/bin/lueur
+        fi
+    - name: Run
+      working-directory: ${{ inputs.working-dir }}
+      shell: bash
+      env:
+        RELIABLY_SERVICE_TOKEN: ${{ inputs.reliably-service-token }}
+        RELIABLY_ORGANIZATION_ID: ${{ inputs.org-id }}
+        RELIABLY_SERVICE_HOST: https://${{ inputs.reliably-host }}
+        RELIABLY_PLAN_ID: ${{ inputs.plan-id }}
+        RELIABLY_EXECUTION_EXTRA: ${{ inputs.reliably-experiment-extra }}
+      run: |
+        $GITHUB_WORKSPACE/.venv/bin/reliably service plan execute --log-stdout --log-file run.log --load-environment --set-status --result-file run.json ${{ inputs.plan-id }}
+        echo "PLAN_STATUS=finished" >> $GITHUB_ENV
+
+    - name: Store results
+      if: success() || failure()
+      working-directory: ${{ inputs.working-dir }}
+      shell: bash
+      run: |
+        export EXECUTION_URL=$(cat run.json | jq -r '.experiment.extensions[] | select(.name=="reliably") | .execution_url')
+
+        uv pip list --format=freeze > dependencies.md
+        git config user.name "${GITHUB_ACTOR}"
+        git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+        git add run.log run.json dependencies.md
+        git commit -s -m "Plan ${{ inputs.plan-id }} execution" -m "Visit ${EXECUTION_URL}"
+        git pull --rebase origin main
+        git push
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        GITHUB_ACTOR: ${{ github.actor }}
+
+    - name: Update Plan Status
+      if: failure()
+      shell: bash
+      run: |
+        # in case the build failed before the reliably cli got executed
+        if [[ "$PLAN_STATUS" == "running" ]]; then
+          curl -s --http2 -X PUT \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ inputs.reliably-service-token }}" \
+            -d '{"status":"error", "error": "Workflow failed"}' \
+            https://${{ inputs.reliably-host }}/api/v1/organization/${{ inputs.org-id }}/plans/${{ inputs.plan-id }}/status
+        fi

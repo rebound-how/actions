@@ -1,0 +1,11 @@
+name: Execute a Reliably Plan
+
+on:
+  workflow_dispatch:
+
+jobs:
+  execute-reliably-plan:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: rebound-how/actions/reliably@main
