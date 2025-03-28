@@ -1,6 +1,6 @@
 <h2 align="center">
   <br>
-  <p align="center"><img src="https://raw.githubusercontent.com/rebound-how/cli/main/public/logo.png"></p>
+  <p align="center"><img src="https://raw.githubusercontent.com/rebound-how/www/main/public/social.png"></p>
 </h2>
 
 <h4 align="center">Rebound GitHub Actions | The open source toolbox for resilient operations</h4>
