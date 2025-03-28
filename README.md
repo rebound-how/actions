@@ -122,4 +122,4 @@ These are passed to the action using `with`.
   * [oha](https://github.com/hatoo/oha) binary to run load tests
 
 
-[ctk]: https://github.com/reliablyhq/actions/blob/main/pyproject.toml#L8
+[ctk]: https://github.com/rebound-how/actions/blob/main/reliably/pyproject.toml#L7
