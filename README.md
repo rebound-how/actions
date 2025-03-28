@@ -112,7 +112,7 @@ These are passed to the action using `with`.
 ### Various notes
 
 * The action automatically installs the Reliably CLI and many
-  [Chaos Toolkit extensions](ctk) for you
+  [Chaos Toolkit extensions][ctk] for you
 * If you create a `bin` directory at the top of your repository, the
   action will automatically add it to the `PATH` if your plan requires access
   to specific utilities.
